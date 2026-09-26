@@ -23,16 +23,23 @@ async function initDatabase() {
     CREATE TABLE IF NOT EXISTS posts (
       id SERIAL PRIMARY KEY,
       author TEXT NOT NULL,
+      avatar TEXT,
       text TEXT NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
+  `);
+
+  // Добавляем avatar в старую таблицу, если её там ещё нет
+  await pool.query(`
+    ALTER TABLE posts
+    ADD COLUMN IF NOT EXISTS avatar TEXT
   `);
 }
 
 app.get("/api/posts", async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT id, author, text, created_at
+      SELECT id, author, avatar, text, created_at
       FROM posts
       ORDER BY created_at DESC
     `);
@@ -47,28 +54,47 @@ app.get("/api/posts", async (req, res) => {
 app.post("/api/posts", async (req, res) => {
   try {
     const text = String(req.body.text || "").trim();
+    const author = String(req.body.author || "Аноним").trim();
+    const avatar = String(req.body.avatar || "").trim();
 
     if (!text) {
-      return res.status(400).json({ error: "Empty post" });
+      return res.status(400).json({
+        error: "Empty post"
+      });
     }
 
     if (text.length > 5000) {
-      return res.status(400).json({ error: "Post is too long" });
+      return res.status(400).json({
+        error: "Post is too long"
+      });
     }
+
+    const safeAuthor =
+      author.length > 30
+        ? author.slice(0, 30)
+        : author;
+
+    const safeAvatar =
+      avatar.length > 2000
+        ? ""
+        : avatar;
 
     const result = await pool.query(
       `
-      INSERT INTO posts (author, text)
-      VALUES ($1, $2)
-      RETURNING id, author, text, created_at
+      INSERT INTO posts (author, avatar, text)
+      VALUES ($1, $2, $3)
+      RETURNING id, author, avatar, text, created_at
       `,
-      ["Аноним", text]
+      [safeAuthor || "Аноним", safeAvatar, text]
     );
 
     res.json(result.rows[0]);
+
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Database error" });
+    res.status(500).json({
+      error: "Database error"
+    });
   }
 });
 
@@ -77,7 +103,9 @@ app.delete("/api/posts/:id", async (req, res) => {
     const id = Number(req.params.id);
 
     if (!Number.isInteger(id)) {
-      return res.status(400).json({ error: "Invalid ID" });
+      return res.status(400).json({
+        error: "Invalid ID"
+      });
     }
 
     const result = await pool.query(
@@ -86,13 +114,20 @@ app.delete("/api/posts/:id", async (req, res) => {
     );
 
     if (result.rowCount === 0) {
-      return res.status(404).json({ error: "Post not found" });
+      return res.status(404).json({
+        error: "Post not found"
+      });
     }
 
-    res.json({ ok: true });
+    res.json({
+      ok: true
+    });
+
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Database error" });
+    res.status(500).json({
+      error: "Database error"
+    });
   }
 });
 
@@ -106,10 +141,16 @@ app.get("/api/health", (req, res) => {
 initDatabase()
   .then(() => {
     app.listen(PORT, () => {
-      console.log(`RetroSocial running on port ${PORT}`);
+      console.log(
+        `RetroSocial running on port ${PORT}`
+      );
     });
   })
   .catch((error) => {
-    console.error("Database initialization failed:", error);
+    console.error(
+      "Database initialization failed:",
+      error
+    );
+
     process.exit(1);
   });
