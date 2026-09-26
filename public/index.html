@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="ru">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>RetroSocial</title>
+
+<style>
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #e9edf2;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+header {
+  background: #3b5998;
+  color: white;
+  padding: 14px 16px;
+  font-size: 22px;
+  font-weight: bold;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.language {
+  display: flex;
+  gap: 5px;
+}
+
+.language button {
+  margin: 0;
+  padding: 6px 10px;
+  background: #2f4f88;
+  color: white;
+  border: 1px solid #8da4d0;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.language button.active {
+  background: white;
+  color: #3b5998;
+}
+
+main {
+  max-width: 700px;
+  margin: 25px auto;
+  padding: 0 10px;
+}
+
+.card {
+  background: white;
+  border: 1px solid #ccd3dc;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+textarea {
+  width: 100%;
+  height: 90px;
+  padding: 10px;
+  resize: vertical;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+.main-button {
+  margin-top: 10px;
+  background: #4b70b5;
+  color: white;
+  border: 0;
+  padding: 9px 18px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.delete-button {
+  background: #c0392b;
+  color: white;
+  border: 0;
+  padding: 8px 13px;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.post h3 {
+  color: #315b9a;
+  margin-bottom: 4px;
+}
+
+small {
+  color: #999;
+}
+
+.post-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+  <div>RetroSocial</div>
+
+  <div class="language">
+
+    <button id="ruButton" onclick="setLanguage('ru')">
+      🇷🇺 RU
+    </button>
+
+    <button id="enButton" onclick="setLanguage('en')">
+      🇬🇧 ENG
+    </button>
+
+  </div>
+
+</header>
+
+<main>
+
+<div class="card">
+
+  <h2 id="welcome">
+    Добро пожаловать 👋
+  </h2>
+
+  <p id="description">
+    Соцсеть в стиле 2014 года.
+  </p>
+
+  <textarea
+    id="text"
+    maxlength="5000"
+    placeholder="Что у тебя нового?"
+  ></textarea>
+
+  <button
+    class="main-button"
+    id="publishButton"
+    onclick="post()"
+  >
+    Опубликовать
+  </button>
+
+</div>
+
+<div id="feed"></div>
+
+</main>
+
+<script>
+
+const translations = {
+
+  ru: {
+    welcome: "Добро пожаловать 👋",
+    description: "Соцсеть в стиле 2014 года.",
+    placeholder: "Что у тебя нового?",
+    publish: "Опубликовать",
+    loading: "Загрузка постов...",
+    empty: "Пока нет постов.",
+    delete: "🗑️ Удалить",
+    deleteConfirm: "Удалить этот пост?",
+    publishError: "Не удалось опубликовать пост.",
+    deleteError: "Не удалось удалить пост.",
+    loadError: "Не удалось загрузить посты."
+  },
+
+  en: {
+    welcome: "Welcome 👋",
+    description: "A social network in the style of 2014.",
+    placeholder: "What's new?",
+    publish: "Publish",
+    loading: "Loading posts...",
+    empty: "No posts yet.",
+    delete: "🗑️ Delete",
+    deleteConfirm: "Delete this post?",
+    publishError: "Failed to publish the post.",
+    deleteError: "Failed to delete the post.",
+    loadError: "Failed to load posts."
+  }
+
+};
+
+let currentLanguage =
+  localStorage.getItem("language") || "ru";
+
+function setLanguage(language) {
+
+  currentLanguage = language;
+
+  localStorage.setItem(
+    "language",
+    language
+  );
+
+  applyLanguage();
+  loadPosts();
+}
+
+function applyLanguage() {
+
+  const t = translations[currentLanguage];
+
+  document.documentElement.lang =
+    currentLanguage;
+
+  document.getElementById("welcome")
+    .textContent = t.welcome;
+
+  document.getElementById("description")
+    .textContent = t.description;
+
+  document.getElementById("text")
+    .placeholder = t.placeholder;
+
+  document.getElementById("publishButton")
+    .textContent = t.publish;
+
+  document.getElementById("ruButton")
+    .classList.toggle(
+      "active",
+      currentLanguage === "ru"
+    );
+
+  document.getElementById("enButton")
+    .classList.toggle(
+      "active",
+      currentLanguage === "en"
+    );
+}
+
+async function loadPosts() {
+
+  try {
+
+    const response =
+      await fetch("/api/posts");
+
+    if (!response.ok) {
+      throw new Error("Load error");
+    }
+
+    const posts =
+      await response.json();
+
+    render(posts);
+
+  } catch (error) {
+
+    console.error(error);
+
+    document.getElementById("feed")
+      .innerHTML = `
+        <div class="card">
+          ${translations[currentLanguage].loadError}
+        </div>
+      `;
+  }
+}
+
+async function post() {
+
+  const textarea =
+    document.getElementById("text");
+
+  const text =
+    textarea.value.trim();
+
+  if (!text) return;
+
+  try {
+
+    const response =
+      await fetch("/api/posts", {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          text: text
+        })
+      });
+
+    if (!response.ok) {
+      throw new Error("Post error");
+    }
+
+    textarea.value = "";
+
+    await loadPosts();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      translations[currentLanguage].publishError
+    );
+  }
+}
+
+async function deletePost(id) {
+
+  const t =
+    translations[currentLanguage];
+
+  if (!confirm(t.deleteConfirm)) {
+    return;
+  }
+
+  try {
+
+    const response =
+      await fetch(
+        `/api/posts/${id}`,
+        {
+          method: "DELETE"
+        }
+      );
+
+    if (!response.ok) {
+      throw new Error("Delete error");
+    }
+
+    await loadPosts();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(t.deleteError);
+  }
+}
+
+function render(posts) {
+
+  const feed =
+    document.getElementById("feed");
+
+  const t =
+    translations[currentLanguage];
+
+  if (posts.length === 0) {
+
+    feed.innerHTML = `
+      <div class="card">
+        ${t.empty}
+      </div>
+    `;
+
+    return;
+  }
+
+  feed.innerHTML =
+    posts.map(post => {
+
+      const date =
+        new Date(post.created_at)
+          .toLocaleString(
+            currentLanguage === "ru"
+              ? "ru-RU"
+              : "en-US"
+          );
+
+      return `
+        <div class="card post">
+
+          <h3>
+            Аноним
+          </h3>
+
+          <small>
+            ${date}
+          </small>
+
+          <p class="post-text">
+            ${escapeHtml(post.text)}
+          </p>
+
+          <button
+            class="delete-button"
+            onclick="deletePost(${post.id})"
+          >
+            ${t.delete}
+          </button>
+
+        </div>
+      `;
+
+    }).join("");
+}
+
+function escapeHtml(text) {
+
+  return String(text)
+    .replace(
+      /[&<>"']/g,
+      function(c) {
+
+        return {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        }[c];
+
+      }
+    );
+}
+
+applyLanguage();
+loadPosts();
+
+setInterval(
+  loadPosts,
+  3000
+);
+
+</script>
+
+</body>
+</html>
