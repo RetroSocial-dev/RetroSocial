@@ -1,289 +1,291 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>RetroSocial</title>
+<meta charset="UTF-8">
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+>
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #e9ebee;
-      color: #222;
-    }
+<title>RetroSocial</title>
 
-    header {
-      background: #3b5998;
-      color: white;
-      padding: 12px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
+<style>
 
-    header h1 {
-      margin: 0;
-      font-size: 22px;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    button {
-      cursor: pointer;
-      border: none;
-      border-radius: 4px;
-      padding: 8px 14px;
-      background: #3b5998;
-      color: white;
-      font-weight: bold;
-    }
+body {
+  margin: 0;
+  background: #e9edf2;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
 
-    button:hover {
-      opacity: 0.9;
-    }
+header {
+  background: #3b5998;
+  color: white;
+  padding: 12px 16px;
 
-    .language-btn {
-      background: white;
-      color: #3b5998;
-    }
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-    .container {
-      max-width: 900px;
-      margin: 20px auto;
-      padding: 0 15px;
-    }
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+}
 
-    .card {
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      padding: 18px;
-      margin-bottom: 20px;
-    }
+.language {
+  display: flex;
+  gap: 5px;
+}
 
-    .profile {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
+.language button {
+  padding: 6px 10px;
+  background: #2f4f88;
+  color: white;
+  border: 1px solid #8da4d0;
+  border-radius: 3px;
+  cursor: pointer;
+}
 
-    .avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: #ddd;
-      border: 2px solid #ccc;
-    }
+.language button.active {
+  background: white;
+  color: #3b5998;
+}
 
-    .profile-info {
-      flex: 1;
-    }
+main {
+  max-width: 700px;
+  margin: 25px auto;
+  padding: 0 10px;
+}
 
-    .profile-info h2 {
-      margin: 0 0 10px;
-      font-size: 20px;
-    }
+.card {
+  background: white;
+  border: 1px solid #ccd3dc;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
 
-    input[type="text"] {
-      width: 100%;
-      padding: 9px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      margin-bottom: 8px;
-    }
+/* PROFILE */
 
-    input[type="file"] {
-      margin-bottom: 10px;
-      max-width: 100%;
-    }
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
 
-    textarea {
-      width: 100%;
-      min-height: 100px;
-      resize: vertical;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-family: Arial, sans-serif;
-      font-size: 15px;
-      margin-bottom: 10px;
-    }
+.avatar {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ddd;
+  border: 2px solid #ccd3dc;
+}
 
-    .post {
-      border-top: 1px solid #ddd;
-      padding: 15px 0;
-    }
+.profile-info {
+  flex: 1;
+}
 
-    .post:first-child {
-      border-top: none;
-    }
+.profile-name {
+  font-size: 21px;
+  font-weight: bold;
+  color: #315b9a;
+}
 
-    .post-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
+input {
+  width: 100%;
+  padding: 9px;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  margin-top: 7px;
+  font-size: 14px;
+}
 
-    .post-avatar {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: #ddd;
-    }
+textarea {
+  width: 100%;
+  height: 90px;
+  padding: 10px;
+  resize: vertical;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
 
-    .post-author {
-      font-weight: bold;
-    }
+.main-button {
+  margin-top: 10px;
+  background: #4b70b5;
+  color: white;
+  border: 0;
+  padding: 9px 18px;
+  border-radius: 3px;
+  cursor: pointer;
+}
 
-    .post-date {
-      color: #888;
-      font-size: 12px;
-    }
+.main-button:hover {
+  background: #3b5998;
+}
 
-    .post-text {
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      margin: 10px 0;
-    }
+.delete-button {
+  background: #c0392b;
+  color: white;
+  border: 0;
+  padding: 7px 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-top: 10px;
+}
 
-    .delete-btn {
-      background: #d9534f;
-      font-size: 12px;
-      padding: 5px 9px;
-    }
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-    .empty {
-      color: #777;
-      text-align: center;
-      padding: 20px;
-    }
+.post-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ddd;
+}
 
-    .profile-buttons {
-      margin-top: 5px;
-    }
+.post-author {
+  color: #315b9a;
+  font-size: 17px;
+  font-weight: bold;
+}
 
-    @media (max-width: 600px) {
-      .container {
-        margin: 10px auto;
-      }
+small {
+  color: #999;
+}
 
-      .profile {
-        align-items: flex-start;
-      }
+.post-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin-top: 12px;
+}
 
-      header {
-        padding: 10px 12px;
-      }
+.file-label {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 7px 10px;
+  background: #eee;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 13px;
+}
 
-      header h1 {
-        font-size: 19px;
-      }
-    }
-  </style>
+#avatarFile {
+  display: none;
+}
+
+.avatar-preview {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: none;
+  margin-top: 10px;
+}
+
+</style>
+
 </head>
 
 <body>
 
 <header>
-  <h1>RetroSocial</h1>
 
-  <button
-    id="languageButton"
-    class="language-btn"
-    onclick="toggleLanguage()"
-  >
-    EN
-  </button>
-</header>
-
-<div class="container">
-
-  <!-- ПРОФИЛЬ -->
-  <div class="card">
-
-    <div class="profile">
-
-      <img
-        id="profileAvatar"
-        class="avatar"
-        src=""
-        alt="Avatar"
-      >
-
-      <div class="profile-info">
-
-        <h2 id="profileName">
-          Аноним
-        </h2>
-
-        <input
-          id="nickname"
-          type="text"
-          maxlength="30"
-          placeholder="Никнейм"
-        >
-
-        <input
-          id="avatarFile"
-          type="file"
-          accept="image/*"
-        >
-
-        <div class="profile-buttons">
-
-          <button
-            id="saveProfileButton"
-            onclick="saveProfile()"
-          >
-            Сохранить профиль
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
+  <div class="logo">
+    RetroSocial
   </div>
 
-
-  <!-- СОЗДАНИЕ ПОСТА -->
-  <div class="card">
-
-    <textarea
-      id="postText"
-      maxlength="5000"
-      placeholder="Что нового?"
-    ></textarea>
+  <div class="language">
 
     <button
-      id="postButton"
-      onclick="createPost()"
+      id="ruButton"
+      onclick="setLanguage('ru')"
     >
-      Опубликовать
+      🇷🇺 RU
+    </button>
+
+    <button
+      id="enButton"
+      onclick="setLanguage('en')"
+    >
+      🇬🇧 ENG
     </button>
 
   </div>
 
+</header>
 
-  <!-- ПОСТЫ -->
-  <div class="card">
+<main>
 
-    <h2 id="feedTitle">
-      Лента
-    </h2>
+<!-- PROFILE -->
 
-    <div id="posts">
-      <div class="empty">
-        Загрузка...
+<div class="card">
+
+  <h2 id="profileTitle">
+    👤 Мой профиль
+  </h2>
+
+  <div class="profile">
+
+    <img
+      id="profileAvatar"
+      class="avatar"
+      src=""
+      alt="avatar"
+    >
+
+    <div class="profile-info">
+
+      <div
+        id="profileName"
+        class="profile-name"
+      >
+        Аноним
       </div>
+
+      <input
+        id="nickname"
+        maxlength="30"
+        placeholder="Твой ник"
+      >
+
+      <label
+        class="file-label"
+        for="avatarFile"
+        id="avatarLabel"
+      >
+        🖼️ Выбрать аватар
+      </label>
+
+      <input
+        id="avatarFile"
+        type="file"
+        accept="image/*"
+      >
+
+      <button
+        class="main-button"
+        onclick="saveProfile()"
+        id="saveProfileButton"
+      >
+        Сохранить профиль
+      </button>
+
     </div>
 
   </div>
@@ -291,52 +293,524 @@
 </div>
 
 
+<!-- NEW POST -->
+
+<div class="card">
+
+  <h2 id="welcome">
+    Добро пожаловать 👋
+  </h2>
+
+  <p id="description">
+    Соцсеть в стиле 2014 года.
+  </p>
+
+  <textarea
+    id="text"
+    maxlength="5000"
+    placeholder="Что у тебя нового?"
+  ></textarea>
+
+  <button
+    class="main-button"
+    id="publishButton"
+    onclick="post()"
+  >
+    Опубликовать
+  </button>
+
+</div>
+
+
+<!-- POSTS -->
+
+<div id="feed"></div>
+
+</main>
+
 <script>
 
-  let currentLanguage = "ru";
+const translations = {
+
+  ru: {
+
+    profileTitle: "👤 Мой профиль",
+    nickname: "Твой ник",
+    avatar: "🖼️ Выбрать аватар",
+    saveProfile: "Сохранить профиль",
+    profileSaved: "Профиль сохранён!",
+    welcome: "Добро пожаловать 👋",
+    description: "Соцсеть в стиле 2014 года.",
+    placeholder: "Что у тебя нового?",
+    publish: "Опубликовать",
+    empty: "Пока нет постов.",
+    delete: "🗑️ Удалить",
+    deleteConfirm: "Удалить этот пост?",
+    publishError: "Не удалось опубликовать пост.",
+    deleteError: "Не удалось удалить пост.",
+    loadError: "Не удалось загрузить посты."
+
+  },
+
+  en: {
+
+    profileTitle: "👤 My profile",
+    nickname: "Your nickname",
+    avatar: "🖼️ Choose avatar",
+    saveProfile: "Save profile",
+    profileSaved: "Profile saved!",
+    welcome: "Welcome 👋",
+    description: "A social network in the style of 2014.",
+    placeholder: "What's new?",
+    publish: "Publish",
+    empty: "No posts yet.",
+    delete: "🗑️ Delete",
+    deleteConfirm: "Delete this post?",
+    publishError: "Failed to publish the post.",
+    deleteError: "Failed to delete the post.",
+    loadError: "Failed to load posts."
+
+  }
+
+};
 
 
-  /* =========================
-     ПРОФИЛЬ
-  ========================= */
-
-  let profile = {
-    name: "Аноним",
-    avatar: ""
-  };
+let currentLanguage =
+  localStorage.getItem("language") || "ru";
 
 
-  function loadProfile() {
+let profile = JSON.parse(
+  localStorage.getItem("profile") ||
+  '{"name":"Аноним","avatar":""}'
+);
 
-    try {
 
-      const saved =
-        localStorage.getItem("profile");
+function setLanguage(language) {
 
-      if (saved) {
+  currentLanguage = language;
 
-        const parsed =
-          JSON.parse(saved);
+  localStorage.setItem(
+    "language",
+    language
+  );
 
-        if (parsed && typeof parsed === "object") {
+  applyLanguage();
+  loadPosts();
 
-          profile.name =
-            parsed.name || "Аноним";
+}
 
-          profile.avatar =
-            parsed.avatar || "";
 
-        }
+function applyLanguage() {
 
-      }
+  const t =
+    translations[currentLanguage];
 
-    } catch (error) {
+  document.documentElement.lang =
+    currentLanguage;
 
-      console.error(
-        "Ошибка загрузки профиля:",
-        error
+  document.getElementById(
+    "profileTitle"
+  ).textContent = t.profileTitle;
+
+  document.getElementById(
+    "nickname"
+  ).placeholder = t.nickname;
+
+  document.getElementById(
+    "avatarLabel"
+  ).textContent = t.avatar;
+
+  document.getElementById(
+    "saveProfileButton"
+  ).textContent = t.saveProfile;
+
+  document.getElementById(
+    "welcome"
+  ).textContent = t.welcome;
+
+  document.getElementById(
+    "description"
+  ).textContent = t.description;
+
+  document.getElementById(
+    "text"
+  ).placeholder = t.placeholder;
+
+  document.getElementById(
+    "publishButton"
+  ).textContent = t.publish;
+
+  document.getElementById(
+    "ruButton"
+  ).classList.toggle(
+    "active",
+    currentLanguage === "ru"
+  );
+
+  document.getElementById(
+    "enButton"
+  ).classList.toggle(
+    "active",
+    currentLanguage === "en"
+  );
+
+}
+
+
+function updateProfileUI() {
+
+  document.getElementById(
+    "profileName"
+  ).textContent =
+    profile.name || "Аноним";
+
+  document.getElementById(
+    "nickname"
+  ).value =
+    profile.name === "Аноним"
+      ? ""
+      : profile.name;
+
+  const avatar =
+    document.getElementById(
+      "profileAvatar"
+    );
+
+  if (profile.avatar) {
+
+    avatar.src = profile.avatar;
+
+  } else {
+
+    avatar.src =
+      "https://www.gravatar.com/avatar/?d=mp";
+
+  }
+
+}
+
+
+document.getElementById(
+  "avatarFile"
+).addEventListener(
+  "change",
+  function(event) {
+
+    const file =
+      event.target.files[0];
+
+    if (!file) return;
+
+    if (file.size > 1000000) {
+
+      alert(
+        currentLanguage === "ru"
+          ? "Аватар слишком большой. Максимум 1 МБ."
+          : "Avatar is too large. Maximum 1 MB."
       );
 
+      event.target.value = "";
+
+      return;
     }
 
-    updateProfile
+    const reader =
+      new FileReader();
+
+    reader.onload =
+      function() {
+
+        profile.avatar =
+          reader.result;
+
+        updateProfileUI();
+
+      };
+
+    reader.readAsDataURL(file);
+
+  }
+);
+
+
+function saveProfile() {
+
+  const name =
+    document.getElementById(
+      "nickname"
+    ).value.trim();
+
+  profile.name =
+    name || "Аноним";
+
+  localStorage.setItem(
+    "profile",
+    JSON.stringify(profile)
+  );
+
+  updateProfileUI();
+
+  alert(
+    translations[currentLanguage]
+      .profileSaved
+  );
+
+}
+
+
+async function loadPosts() {
+
+  try {
+
+    const response =
+      await fetch("/api/posts");
+
+    if (!response.ok) {
+      throw new Error("Load error");
+    }
+
+    const posts =
+      await response.json();
+
+    render(posts);
+
+  } catch (error) {
+
+    console.error(error);
+
+    document.getElementById(
+      "feed"
+    ).innerHTML = `
+      <div class="card">
+        ${translations[currentLanguage].loadError}
+      </div>
+    `;
+
+  }
+
+}
+
+
+async function post() {
+
+  const textarea =
+    document.getElementById("text");
+
+  const text =
+    textarea.value.trim();
+
+  if (!text) return;
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/posts",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+
+            text: text,
+
+            author:
+              profile.name || "Аноним",
+
+            avatar:
+              profile.avatar || ""
+
+          })
+
+        }
+      );
+
+    if (!response.ok) {
+      throw new Error("Post error");
+    }
+
+    textarea.value = "";
+
+    await loadPosts();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      translations[currentLanguage]
+        .publishError
+    );
+
+  }
+
+}
+
+
+async function deletePost(id) {
+
+  const t =
+    translations[currentLanguage];
+
+  if (!confirm(t.deleteConfirm)) {
+    return;
+  }
+
+  try {
+
+    const response =
+      await fetch(
+        `/api/posts/${id}`,
+        {
+          method: "DELETE"
+        }
+      );
+
+    if (!response.ok) {
+      throw new Error("Delete error");
+    }
+
+    await loadPosts();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(t.deleteError);
+
+  }
+
+}
+
+
+function render(posts) {
+
+  const feed =
+    document.getElementById("feed");
+
+  const t =
+    translations[currentLanguage];
+
+  if (posts.length === 0) {
+
+    feed.innerHTML = `
+      <div class="card">
+        ${t.empty}
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  feed.innerHTML =
+    posts.map(post => {
+
+      const date =
+        new Date(
+          post.created_at
+        ).toLocaleString(
+          currentLanguage === "ru"
+            ? "ru-RU"
+            : "en-US"
+        );
+
+
+      const avatar =
+        post.avatar ||
+        "https://www.gravatar.com/avatar/?d=mp";
+
+
+      return `
+
+        <div class="card post">
+
+          <div class="post-header">
+
+            <img
+              class="post-avatar"
+              src="${escapeHtml(avatar)}"
+              alt="avatar"
+            >
+
+            <div>
+
+              <div class="post-author">
+                ${escapeHtml(
+                  post.author || "Аноним"
+                )}
+              </div>
+
+              <small>
+                ${date}
+              </small>
+
+            </div>
+
+          </div>
+
+
+          <p class="post-text">
+            ${escapeHtml(post.text)}
+          </p>
+
+
+          <button
+            class="delete-button"
+            onclick="deletePost(${post.id})"
+          >
+            ${t.delete}
+          </button>
+
+        </div>
+
+      `;
+
+    }).join("");
+
+}
+
+
+function escapeHtml(text) {
+
+  return String(text)
+    .replace(
+      /[&<>"']/g,
+      function(c) {
+
+        return {
+
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+
+        }[c];
+
+      }
+    );
+
+}
+
+
+applyLanguage();
+updateProfileUI();
+loadPosts();
+
+
+setInterval(
+  loadPosts,
+  3000
+);
+
+</script>
+
+</body>
+
+</html>
