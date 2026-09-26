@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+>
+
+<title>RetroSocial</title>
+
+<style>
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #e9edf2;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+header {
+  background: #3b5998;
+  color: white;
+  padding: 16px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+main {
+  max-width: 700px;
+  margin: 25px auto;
+  padding: 0 10px;
+}
+
+.card {
+  background: white;
+  border: 1px solid #ccd3dc;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+textarea {
+  width: 100%;
+  height: 90px;
+  box-sizing: border-box;
+  padding: 10px;
+  resize: vertical;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+button {
+  margin-top: 10px;
+  background: #4b70b5;
+  color: white;
+  border: 0;
+  padding: 9px 18px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #395f9d;
+}
+
+.delete-button {
+  background: #c0392b;
+}
+
+.delete-button:hover {
+  background: #a93226;
+}
+
+.post h3 {
+  color: #315b9a;
+  margin-bottom: 4px;
+}
+
+small {
+  color: #999;
+}
+
+.post-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.loading {
+  text-align: center;
+  color: #777;
+}
+
+.error {
+  color: #c0392b;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+  RetroSocial
+</header>
+
+<main>
+
+<div class="card">
+
+  <h2>Добро пожаловать 👋</h2>
+
+  <p>
+    Соцсеть в стиле 2014 года.
+  </p>
+
+  <textarea
+    id="text"
+    maxlength="5000"
+    placeholder="Что у тебя нового?"
+  ></textarea>
+
+  <button onclick="post()">
+    Опубликовать
+  </button>
+
+</div>
+
+<div id="feed">
+
+  <div class="card loading">
+    Загрузка постов...
+  </div>
+
+</div>
+
+</main>
+
+<script>
+
+// =========================
+// Загрузка постов
+// =========================
+
+async function loadPosts() {
+
+  try {
+
+    const response = await fetch("/api/posts");
+
+    if (!response.ok) {
+      throw new Error("Ошибка загрузки");
+    }
+
+    const posts = await response.json();
+
+    render(posts);
+
+  } catch (error) {
+
+    console.error(error);
+
+    document.getElementById("feed").innerHTML = `
+      <div class="card error">
+        Не удалось загрузить посты.
+      </div>
+    `;
+
+  }
+
+}
+
+
+// =========================
+// Создание поста
+// =========================
+
+async function post() {
+
+  const textarea =
+    document.getElementById("text");
+
+  const text =
+    textarea.value.trim();
+
+  if (!text) {
+    return;
+  }
+
+  try {
+
+    const response = await fetch(
+      "/api/posts",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          text: text
+        })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Ошибка публикации");
+    }
+
+    textarea.value = "";
+
+    await loadPosts();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Не удалось опубликовать пост."
+    );
+
+  }
+
+}
+
+
+// =========================
+// Удаление поста
+// =========================
+
+async function deletePost(id) {
+
+  const confirmed =
+    confirm("Удалить этот пост?");
+
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+
+    const response = await fetch(
+      `/api/posts/${id}`,
+      {
+        method: "DELETE"
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Ошибка удаления");
+    }
+
+    await loadPosts();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Не удалось удалить пост."
+    );
+
+  }
+
+}
+
+
+// =========================
+// Отображение постов
+// =========================
+
+function render(posts) {
+
+  const feed =
+    document.getElementById("feed");
+
+  if (posts.length === 0) {
+
+    feed.innerHTML = `
+      <div class="card">
+        Пока нет постов.
+      </div>
+    `;
+
+    return;
+  }
+
+  feed.innerHTML = posts.map(post => {
+
+    const date =
+      new Date(post.created_at)
+        .toLocaleString("ru-RU");
+
+    return `
+
+      <div class="card post">
+
+        <h3>
+          ${escapeHtml(post.author)}
+        </h3>
+
+        <small>
+          ${date}
+        </small>
+
+        <p class="post-text">
+          ${escapeHtml(post.text)}
+        </p>
+
+        <button
+          class="delete-button"
+          onclick="deletePost(${post.id})"
+        >
+          🗑️ Удалить
+        </button>
+
+      </div>
+
+    `;
+
+  }).join("");
+
+}
+
+
+// =========================
+// Защита HTML
+// =========================
+
+function escapeHtml(text) {
+
+  return String(text)
+    .replace(/[&<>"']/g, function(c) {
+
+      return {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[c];
+
+    });
+
+}
+
+
+// =========================
+// Запуск
+// =========================
+
+loadPosts();
+
+
+// Обновлять ленту каждые 3 секунды
+setInterval(loadPosts, 3000);
+
+</script>
+
+</body>
+
+</html>
