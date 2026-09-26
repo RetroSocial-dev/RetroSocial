@@ -1,10 +1,14 @@
 <!doctype html>
 <html lang="ru">
+
 <head>
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+>
 
 <title>RetroSocial</title>
 
@@ -24,13 +28,16 @@ body {
 header {
   background: #3b5998;
   color: white;
-  padding: 14px 16px;
-  font-size: 22px;
-  font-weight: bold;
+  padding: 12px 16px;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
 }
 
 .language {
@@ -39,7 +46,6 @@ header {
 }
 
 .language button {
-  margin: 0;
   padding: 6px 10px;
   background: #2f4f88;
   color: white;
@@ -67,6 +73,42 @@ main {
   margin-bottom: 15px;
 }
 
+/* PROFILE */
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.avatar {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ddd;
+  border: 2px solid #ccd3dc;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-name {
+  font-size: 21px;
+  font-weight: bold;
+  color: #315b9a;
+}
+
+input {
+  width: 100%;
+  padding: 9px;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  margin-top: 7px;
+  font-size: 14px;
+}
+
 textarea {
   width: 100%;
   height: 90px;
@@ -88,19 +130,38 @@ textarea {
   cursor: pointer;
 }
 
+.main-button:hover {
+  background: #3b5998;
+}
+
 .delete-button {
   background: #c0392b;
   color: white;
   border: 0;
-  padding: 8px 13px;
+  padding: 7px 12px;
   border-radius: 3px;
   cursor: pointer;
   margin-top: 10px;
 }
 
-.post h3 {
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.post-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ddd;
+}
+
+.post-author {
   color: #315b9a;
-  margin-bottom: 4px;
+  font-size: 17px;
+  font-weight: bold;
 }
 
 small {
@@ -110,6 +171,31 @@ small {
 .post-text {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
+  margin-top: 12px;
+}
+
+.file-label {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 7px 10px;
+  background: #eee;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+#avatarFile {
+  display: none;
+}
+
+.avatar-preview {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: none;
+  margin-top: 10px;
 }
 
 </style>
@@ -120,15 +206,23 @@ small {
 
 <header>
 
-  <div>RetroSocial</div>
+  <div class="logo">
+    RetroSocial
+  </div>
 
   <div class="language">
 
-    <button id="ruButton" onclick="setLanguage('ru')">
+    <button
+      id="ruButton"
+      onclick="setLanguage('ru')"
+    >
       🇷🇺 RU
     </button>
 
-    <button id="enButton" onclick="setLanguage('en')">
+    <button
+      id="enButton"
+      onclick="setLanguage('en')"
+    >
       🇬🇧 ENG
     </button>
 
@@ -137,6 +231,69 @@ small {
 </header>
 
 <main>
+
+<!-- PROFILE -->
+
+<div class="card">
+
+  <h2 id="profileTitle">
+    👤 Мой профиль
+  </h2>
+
+  <div class="profile">
+
+    <img
+      id="profileAvatar"
+      class="avatar"
+      src=""
+      alt="avatar"
+    >
+
+    <div class="profile-info">
+
+      <div
+        id="profileName"
+        class="profile-name"
+      >
+        Аноним
+      </div>
+
+      <input
+        id="nickname"
+        maxlength="30"
+        placeholder="Твой ник"
+      >
+
+      <label
+        class="file-label"
+        for="avatarFile"
+        id="avatarLabel"
+      >
+        🖼️ Выбрать аватар
+      </label>
+
+      <input
+        id="avatarFile"
+        type="file"
+        accept="image/*"
+      >
+
+      <button
+        class="main-button"
+        onclick="saveProfile()"
+        id="saveProfileButton"
+      >
+        Сохранить профиль
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- NEW POST -->
 
 <div class="card">
 
@@ -164,6 +321,9 @@ small {
 
 </div>
 
+
+<!-- POSTS -->
+
 <div id="feed"></div>
 
 </main>
@@ -173,37 +333,57 @@ small {
 const translations = {
 
   ru: {
+
+    profileTitle: "👤 Мой профиль",
+    nickname: "Твой ник",
+    avatar: "🖼️ Выбрать аватар",
+    saveProfile: "Сохранить профиль",
+    profileSaved: "Профиль сохранён!",
     welcome: "Добро пожаловать 👋",
     description: "Соцсеть в стиле 2014 года.",
     placeholder: "Что у тебя нового?",
     publish: "Опубликовать",
-    loading: "Загрузка постов...",
     empty: "Пока нет постов.",
     delete: "🗑️ Удалить",
     deleteConfirm: "Удалить этот пост?",
     publishError: "Не удалось опубликовать пост.",
     deleteError: "Не удалось удалить пост.",
     loadError: "Не удалось загрузить посты."
+
   },
 
   en: {
+
+    profileTitle: "👤 My profile",
+    nickname: "Your nickname",
+    avatar: "🖼️ Choose avatar",
+    saveProfile: "Save profile",
+    profileSaved: "Profile saved!",
     welcome: "Welcome 👋",
     description: "A social network in the style of 2014.",
     placeholder: "What's new?",
     publish: "Publish",
-    loading: "Loading posts...",
     empty: "No posts yet.",
     delete: "🗑️ Delete",
     deleteConfirm: "Delete this post?",
     publishError: "Failed to publish the post.",
     deleteError: "Failed to delete the post.",
     loadError: "Failed to load posts."
+
   }
 
 };
 
+
 let currentLanguage =
   localStorage.getItem("language") || "ru";
+
+
+let profile = JSON.parse(
+  localStorage.getItem("profile") ||
+  '{"name":"Аноним","avatar":""}'
+);
+
 
 function setLanguage(language) {
 
@@ -216,39 +396,167 @@ function setLanguage(language) {
 
   applyLanguage();
   loadPosts();
+
 }
+
 
 function applyLanguage() {
 
-  const t = translations[currentLanguage];
+  const t =
+    translations[currentLanguage];
 
   document.documentElement.lang =
     currentLanguage;
 
-  document.getElementById("welcome")
-    .textContent = t.welcome;
+  document.getElementById(
+    "profileTitle"
+  ).textContent = t.profileTitle;
 
-  document.getElementById("description")
-    .textContent = t.description;
+  document.getElementById(
+    "nickname"
+  ).placeholder = t.nickname;
 
-  document.getElementById("text")
-    .placeholder = t.placeholder;
+  document.getElementById(
+    "avatarLabel"
+  ).textContent = t.avatar;
 
-  document.getElementById("publishButton")
-    .textContent = t.publish;
+  document.getElementById(
+    "saveProfileButton"
+  ).textContent = t.saveProfile;
 
-  document.getElementById("ruButton")
-    .classList.toggle(
-      "active",
-      currentLanguage === "ru"
-    );
+  document.getElementById(
+    "welcome"
+  ).textContent = t.welcome;
 
-  document.getElementById("enButton")
-    .classList.toggle(
-      "active",
-      currentLanguage === "en"
-    );
+  document.getElementById(
+    "description"
+  ).textContent = t.description;
+
+  document.getElementById(
+    "text"
+  ).placeholder = t.placeholder;
+
+  document.getElementById(
+    "publishButton"
+  ).textContent = t.publish;
+
+  document.getElementById(
+    "ruButton"
+  ).classList.toggle(
+    "active",
+    currentLanguage === "ru"
+  );
+
+  document.getElementById(
+    "enButton"
+  ).classList.toggle(
+    "active",
+    currentLanguage === "en"
+  );
+
 }
+
+
+function updateProfileUI() {
+
+  document.getElementById(
+    "profileName"
+  ).textContent =
+    profile.name || "Аноним";
+
+  document.getElementById(
+    "nickname"
+  ).value =
+    profile.name === "Аноним"
+      ? ""
+      : profile.name;
+
+  const avatar =
+    document.getElementById(
+      "profileAvatar"
+    );
+
+  if (profile.avatar) {
+
+    avatar.src = profile.avatar;
+
+  } else {
+
+    avatar.src =
+      "https://www.gravatar.com/avatar/?d=mp";
+
+  }
+
+}
+
+
+document.getElementById(
+  "avatarFile"
+).addEventListener(
+  "change",
+  function(event) {
+
+    const file =
+      event.target.files[0];
+
+    if (!file) return;
+
+    if (file.size > 1000000) {
+
+      alert(
+        currentLanguage === "ru"
+          ? "Аватар слишком большой. Максимум 1 МБ."
+          : "Avatar is too large. Maximum 1 MB."
+      );
+
+      event.target.value = "";
+
+      return;
+    }
+
+    const reader =
+      new FileReader();
+
+    reader.onload =
+      function() {
+
+        profile.avatar =
+          reader.result;
+
+        updateProfileUI();
+
+      };
+
+    reader.readAsDataURL(file);
+
+  }
+);
+
+
+function saveProfile() {
+
+  const name =
+    document.getElementById(
+      "nickname"
+    ).value.trim();
+
+  profile.name =
+    name || "Аноним";
+
+  localStorage.setItem(
+    "profile",
+    JSON.stringify(profile)
+  );
+
+  updateProfileUI();
+
+  alert(
+    translations[currentLanguage]
+      .profileSaved
+  );
+
+}
+
 
 async function loadPosts() {
 
@@ -270,14 +578,18 @@ async function loadPosts() {
 
     console.error(error);
 
-    document.getElementById("feed")
-      .innerHTML = `
-        <div class="card">
-          ${translations[currentLanguage].loadError}
-        </div>
-      `;
+    document.getElementById(
+      "feed"
+    ).innerHTML = `
+      <div class="card">
+        ${translations[currentLanguage].loadError}
+      </div>
+    `;
+
   }
+
 }
+
 
 async function post() {
 
@@ -292,17 +604,30 @@ async function post() {
   try {
 
     const response =
-      await fetch("/api/posts", {
-        method: "POST",
+      await fetch(
+        "/api/posts",
+        {
+          method: "POST",
 
-        headers: {
-          "Content-Type": "application/json"
-        },
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
 
-        body: JSON.stringify({
-          text: text
-        })
-      });
+          body: JSON.stringify({
+
+            text: text,
+
+            author:
+              profile.name || "Аноним",
+
+            avatar:
+              profile.avatar || ""
+
+          })
+
+        }
+      );
 
     if (!response.ok) {
       throw new Error("Post error");
@@ -317,10 +642,14 @@ async function post() {
     console.error(error);
 
     alert(
-      translations[currentLanguage].publishError
+      translations[currentLanguage]
+        .publishError
     );
+
   }
+
 }
+
 
 async function deletePost(id) {
 
@@ -352,8 +681,11 @@ async function deletePost(id) {
     console.error(error);
 
     alert(t.deleteError);
+
   }
+
 }
+
 
 function render(posts) {
 
@@ -372,33 +704,61 @@ function render(posts) {
     `;
 
     return;
+
   }
+
 
   feed.innerHTML =
     posts.map(post => {
 
       const date =
-        new Date(post.created_at)
-          .toLocaleString(
-            currentLanguage === "ru"
-              ? "ru-RU"
-              : "en-US"
-          );
+        new Date(
+          post.created_at
+        ).toLocaleString(
+          currentLanguage === "ru"
+            ? "ru-RU"
+            : "en-US"
+        );
+
+
+      const avatar =
+        post.avatar ||
+        "https://www.gravatar.com/avatar/?d=mp";
+
 
       return `
+
         <div class="card post">
 
-          <h3>
-            Аноним
-          </h3>
+          <div class="post-header">
 
-          <small>
-            ${date}
-          </small>
+            <img
+              class="post-avatar"
+              src="${escapeHtml(avatar)}"
+              alt="avatar"
+            >
+
+            <div>
+
+              <div class="post-author">
+                ${escapeHtml(
+                  post.author || "Аноним"
+                )}
+              </div>
+
+              <small>
+                ${date}
+              </small>
+
+            </div>
+
+          </div>
+
 
           <p class="post-text">
             ${escapeHtml(post.text)}
           </p>
+
 
           <button
             class="delete-button"
@@ -408,10 +768,13 @@ function render(posts) {
           </button>
 
         </div>
+
       `;
 
     }).join("");
+
 }
+
 
 function escapeHtml(text) {
 
@@ -421,19 +784,25 @@ function escapeHtml(text) {
       function(c) {
 
         return {
+
           "&": "&amp;",
           "<": "&lt;",
           ">": "&gt;",
           '"': "&quot;",
           "'": "&#039;"
+
         }[c];
 
       }
     );
+
 }
 
+
 applyLanguage();
+updateProfileUI();
 loadPosts();
+
 
 setInterval(
   loadPosts,
@@ -443,4 +812,5 @@ setInterval(
 </script>
 
 </body>
+
 </html>
